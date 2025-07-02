@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anshuman's Combined Project</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; }
+    header, footer { background: #333; color: white; padding: 1em; text-align: center; }
+    nav a { color: white; margin: 0 1em; text-decoration: none; }
+    section { padding: 2em; }
+    .container { max-width: 1000px; margin: auto; }
+    .box { border: 1px solid #ccc; padding: 1em; margin: 1em 0; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      nav a { display: block; margin: 0.5em 0; }
+    }
+
+    /* To-Do List styles */
+    #taskInput, button { padding: 10px; margin: 5px 0; }
+    ul { list-style: none; padding-left: 0; }
+    li { padding: 5px 0; cursor: pointer; }
+
+    /* Product listing styles */
+    select { margin: 0.5em 0; padding: 5px; }
+    .product { border: 1px solid #aaa; padding: 10px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Anshuman Thakur's Portfolio</h1>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#todo">To-Do List</a>
+      <a href="#products">Products</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- About Section -->
+  <section id="about" class="container">
+    <h2>About Me</h2>
+    <p>I am a passionate web developer who loves building responsive and interactive applications.</p>
+    <div class="box">
+      <h3>My Projects</h3>
+      <ul>
+        <li>📝 To-Do App with Local Storage</li>
+        <li>🛍️ Product Filter Page</li>
+        <li>🌐 Portfolio Website</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- To-Do List Section -->
+  <section id="todo" class="container">
+    <h2>📝 To-Do List</h2>
+    <input id="taskInput" placeholder="Add a new task" />
+    <button onclick="addTask()">Add</button>
+    <ul id="taskList"></ul>
+  </section>
+
+  <!-- Product Listing Section -->
+  <section id="products" class="container">
+    <h2>🛍️ Product Listing</h2>
+    <label>Filter by Category:</label>
+    <select id="categoryFilter">
+      <option value="all">All</option>
+      <option value="electronics">Electronics</option>
+      <option value="fashion">Fashion</option>
+    </select>
+
+    <label>Sort by Price:</label>
+    <select id="sortOption">
+      <option value="asc">Low to High</option>
+      <option value="desc">High to Low</option>
+    </select>
+
+    <div id="productList"></div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="container">
+    <h2>📩 Contact</h2>
+    <p>Email: anshuman@example.com</p>
+    <p>Location: India</p>
+  </section>
+
+  <footer>
+    <p>© 2025 Anshuman Thakur | All Rights Reserved</p>
+  </footer>
+
+  <script>
+    // ✅ TO-DO LIST CODE
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+
+    function loadTasks() {
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      taskList.innerHTML = '';
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.textContent = task;
+        li.onclick = () => removeTask(index);
+        taskList.appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const task = taskInput.value.trim();
+      if (!task) return;
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.push(task);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      taskInput.value = '';
+      loadTasks();
+    }
+
+    function removeTask(index) {
+      const tasks = JSON.parse(localStorage.getItem('tasks'));
+      tasks.splice(index, 1);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      loadTasks();
+    }
+
+    loadTasks();
+
+    // ✅ PRODUCT FILTER + SORT CODE
+    const products = [
+      { name: "Smartphone", category: "electronics", price: 300 },
+      { name: "T-shirt", category: "fashion", price: 20 },
+      { name: "Laptop", category: "electronics", price: 1000 },
+      { name: "Jeans", category: "fashion", price: 40 }
+    ];
+
+    const productList = document.getElementById('productList');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const sortOption = document.getElementById('sortOption');
+
+    function renderProducts() {
+      const category = categoryFilter.value;
+      const sort = sortOption.value;
+
+      let filtered = products.filter(p => category === 'all' || p.category === category);
+      filtered.sort((a, b) => sort === 'asc' ? a.price - b.price : b.price - a.price);
+
+      productList.innerHTML = '';
+      filtered.forEach(product => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `<strong>${product.name}</strong><br>Category: ${product.category}<br>Price: $${product.price}`;
+        productList.appendChild(div);
+      });
+    }
+
+    categoryFilter.onchange = sortOption.onchange = renderProducts;
+
+    renderProducts();
+  </script>
+</body>
+</html>
